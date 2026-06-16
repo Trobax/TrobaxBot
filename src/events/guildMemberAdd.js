@@ -48,42 +48,14 @@ export default {
                     ? formatWelcomeMessage(welcomeConfig.welcomeEmbed.footer, formatData)
                     : `Welcome to ${guild.name}!`;
 
-                const canEmbed = permissions.has(PermissionFlagsBits.EmbedLinks);
                 const welcomeCard = await createWelcomeCard(user, guild);
-                const files = welcomeCard ? [welcomeCard] : [];
-
-                if (!canEmbed) {
-                    await channel.send({
-                        content: messageContent || welcomeMessage,
-                        files
-                    });
-                } else {
-                    const embed = new EmbedBuilder()
-                        .setColor(welcomeConfig.welcomeEmbed?.color || getColor('success'))
-                        .setTitle(embedTitle)
-                        .setDescription(welcomeMessage)
-                        .setThumbnail(user.displayAvatarURL())
-                        .addFields(
-                            { name: 'User', value: `${user.tag}`, inline: true },
-                            { name: 'Member Count', value: guild.memberCount.toString(), inline: true }
-                        )
-                        .setTimestamp()
-                        .setFooter({ text: embedFooter });
-                    
-                    if (welcomeCard) {
-                        embed.setImage('attachment://welcome-card.png');
-                    } else if (welcomeConfig.welcomeImage) {
-                        embed.setImage(welcomeConfig.welcomeImage);
-                    } else if (welcomeConfig.welcomeEmbed?.image?.url) {
-                        embed.setImage(welcomeConfig.welcomeEmbed.image.url);
-                    }
-                    
-                    await channel.send({ 
-                        content: messageContent,
-                        embeds: [embed],
-                        files
-                    });
+                if (welcomeCard) {
+                    await channel.send({ files: [welcomeCard] });
                 }
+                
+                await channel.send({
+                    content: messageContent || welcomeMessage
+                });
             }
         }
         

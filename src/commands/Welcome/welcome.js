@@ -75,28 +75,13 @@ export default {
                     formatData
                 );
 
-                const embed = new EmbedBuilder()
-                    .setColor(getColor('success'))
-                    .setTitle('🎉 Welcome!')
-                    .setDescription(welcomeMessage)
-                    .setThumbnail(interaction.user.displayAvatarURL())
-                    .addFields(
-                        { name: 'User', value: `${interaction.user.tag}`, inline: true },
-                        { name: 'Member Count', value: interaction.guild.memberCount.toString(), inline: true }
-                    )
-                    .setTimestamp()
-                    .setFooter({ text: `Welcome to ${interaction.guild.name}!` });
-
                 const welcomeCard = await createWelcomeCard(interaction.user, interaction.guild);
-                const files = welcomeCard ? [welcomeCard] : [];
-
                 if (welcomeCard) {
-                    embed.setImage('attachment://welcome-card.png');
+                    await interaction.channel.send({ files: [welcomeCard] });
                 }
 
                 return await InteractionHelper.safeEditReply(interaction, {
-                    embeds: [embed],
-                    files
+                    content: welcomeMessage
                 });
             } catch (error) {
                 logger.error(`[Welcome] Test trigger failed:`, error);

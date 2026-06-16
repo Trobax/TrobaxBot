@@ -24,19 +24,22 @@ export async function createWelcomeCard(user, guild) {
 
         // 2. Draw Avatar
         const avatarUrl = user.displayAvatarURL({ extension: 'png', size: 256 });
+        console.log(`[WelcomeCard] User: ${user.tag}, avatarUrl: ${avatarUrl}`);
         
         let avatarImg;
         try {
             const response = await axios.get(avatarUrl, { responseType: 'arraybuffer' });
             const avatarBuffer = Buffer.from(response.data);
             avatarImg = await loadImage(avatarBuffer);
+            console.log(`[WelcomeCard] Avatar image loaded successfully? ${!!avatarImg}`);
         } catch (avatarError) {
-            logger.warn(`Failed to load avatar from ${avatarUrl} via axios, using default colors:`, avatarError.message);
+            console.error(`[WelcomeCard] Failed to load avatar from ${avatarUrl} via axios:`, avatarError.message);
         }
 
         const avatarX = parseInt(process.env.WELCOME_CARD_AVATAR_X || '512', 10);
         const avatarY = parseInt(process.env.WELCOME_CARD_AVATAR_Y || '190', 10);
         const avatarRadius = parseInt(process.env.WELCOME_CARD_AVATAR_RADIUS || '95', 10);
+        console.log(`[WelcomeCard] Drawing avatar at X: ${avatarX}, Y: ${avatarY}, Radius: ${avatarRadius}`);
 
         ctx.save();
         ctx.beginPath();
