@@ -37,8 +37,8 @@ export async function createWelcomeCard(user, guild) {
         }
 
         const avatarX = parseInt(process.env.WELCOME_CARD_AVATAR_X || '512', 10);
-        const avatarY = parseInt(process.env.WELCOME_CARD_AVATAR_Y || '190', 10);
-        const avatarRadius = parseInt(process.env.WELCOME_CARD_AVATAR_RADIUS || '95', 10);
+        const avatarY = parseInt(process.env.WELCOME_CARD_AVATAR_Y || '178', 10);
+        const avatarRadius = parseInt(process.env.WELCOME_CARD_AVATAR_RADIUS || '90', 10);
         console.log(`[WelcomeCard] Drawing avatar at X: ${avatarX}, Y: ${avatarY}, Radius: ${avatarRadius}`);
 
         ctx.save();
@@ -72,17 +72,24 @@ export async function createWelcomeCard(user, guild) {
         
         // Main welcome heading
         ctx.font = 'bold 36px sans-serif';
-        const welcomeY = parseInt(process.env.WELCOME_CARD_TEXT_WELCOME_Y || '320', 10);
+        ctx.shadowColor = '#00e5ff';
+        ctx.shadowBlur = 8;
+        const welcomeY = parseInt(process.env.WELCOME_CARD_TEXT_WELCOME_Y || '315', 10);
         ctx.fillText('WELCOME', 512, welcomeY);
 
         // Subtext with username and member count
-        ctx.font = '24px sans-serif';
+        ctx.font = 'bold 26px sans-serif';
         ctx.fillStyle = '#00e5ff';
+        ctx.shadowColor = '#00e5ff';
+        ctx.shadowBlur = 12;
         
-        const username = user.username;
+        const username = user.username.toUpperCase();
         const memberCount = guild.memberCount.toString();
-        const subY = parseInt(process.env.WELCOME_CARD_TEXT_SUB_Y || '355', 10);
+        const subY = parseInt(process.env.WELCOME_CARD_TEXT_SUB_Y || '350', 10);
         ctx.fillText(`${username} | MEMBER #${memberCount}`, 512, subY);
+        
+        // Reset shadow
+        ctx.shadowBlur = 0;
 
         // 4. Return as Discord Attachment
         const buffer = canvas.toBuffer('image/png');

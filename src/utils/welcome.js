@@ -6,7 +6,7 @@ const DEFAULT_TEMPLATES = {
 
 <a:loading_discord:1516466722499199177> - USER : 『  [user] 』. <a:loading_discord:1516466722499199177>
    <a:pin:1516467379272552660> - USERNUMBER :   [memberCount]  <a:pin:1516467379272552660>
-     <a:arrow:1516467831510667506>  - [user] read :scroll:↣｜rules
+     <a:arrow:1516467831510667506>  - [user] read :scroll:↣｜[rules]
 <a:seperators:784039573780168744><a:seperators:784039573780168744><a:seperators:784039573780168744><a:seperators:784039573780168744><a:seperators:784039573780168744><a:seperators:784039573780168744><a:seperators:784039573780168744><a:seperators:784039573780168744><a:seperators:784039573780168744><a:seperators:784039573780168744><a:seperators:784039573780168744><a:seperators:784039573780168744><a:seperators:784039573780168744><a:seperators:784039573780168744><a:seperators:784039573780168744><a:seperators:784039573780168744><a:seperators:784039573780168744><a:seperators:784039573780168744><a:seperators:784039573780168744>`,
     goodbye: '{user.tag} has left the server.'
 };
@@ -58,7 +58,9 @@ export function formatWelcomeMessage(message, data) {
         '{guild.memberCount}': guild?.memberCount?.toString?.() || '0',
         '{memberCount}': guild?.memberCount?.toString?.() || '0',
         '[memberCount]': guild?.memberCount?.toString?.() || '0',
-        '{membercount}': guild?.memberCount?.toString?.() || '0'
+        '{membercount}': guild?.memberCount?.toString?.() || '0',
+        '[rules]': guild?.rulesChannel?.toString?.() || guild?.channels?.cache?.find?.(c => c.name.toLowerCase().includes('rule'))?.toString?.() || 'rules',
+        '{rules}': guild?.rulesChannel?.toString?.() || guild?.channels?.cache?.find?.(c => c.name.toLowerCase().includes('rule'))?.toString?.() || 'rules'
     };
 
     let result = message;
