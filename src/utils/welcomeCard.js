@@ -23,7 +23,7 @@ export async function createWelcomeCard(user, guild) {
         ctx.drawImage(bg, 0, 0, width, height);
 
         // 2. Draw Avatar
-        const avatarUrl = user.displayAvatarURL({ extension: 'png', size: 256 });
+        const avatarUrl = user.displayAvatarURL({ extension: 'png', forceStatic: true, size: 256 });
         console.log(`[WelcomeCard] User: ${user.tag}, avatarUrl: ${avatarUrl}`);
         
         let avatarImg;
