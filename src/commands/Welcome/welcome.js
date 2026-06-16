@@ -77,7 +77,18 @@ export default {
 
                 const welcomeCard = await createWelcomeCard(interaction.user, interaction.guild);
                 if (welcomeCard) {
-                    await interaction.channel.send({ files: [welcomeCard] });
+                    try {
+                        await interaction.channel.send({ files: [welcomeCard] });
+                        return await InteractionHelper.safeEditReply(interaction, {
+                            content: welcomeMessage
+                        });
+                    } catch (sendError) {
+                        logger.warn(`[Welcome] Failed to send card to channel directly, falling back to interaction reply:`, sendError.message);
+                        return await InteractionHelper.safeEditReply(interaction, {
+                            content: welcomeMessage,
+                            files: [welcomeCard]
+                        });
+                    }
                 }
 
                 return await InteractionHelper.safeEditReply(interaction, {
