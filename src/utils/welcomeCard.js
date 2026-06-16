@@ -1,5 +1,6 @@
 import { createCanvas, loadImage } from '@napi-rs/canvas';
 import { AttachmentBuilder } from 'discord.js';
+import axios from 'axios';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { logger } from './logger.js';
@@ -26,9 +27,11 @@ export async function createWelcomeCard(user, guild) {
         
         let avatarImg;
         try {
-            avatarImg = await loadImage(avatarUrl);
+            const response = await axios.get(avatarUrl, { responseType: 'arraybuffer' });
+            const avatarBuffer = Buffer.from(response.data);
+            avatarImg = await loadImage(avatarBuffer);
         } catch (avatarError) {
-            logger.warn(`Failed to load avatar from ${avatarUrl}, using default colors`, avatarError.message);
+            logger.warn(`Failed to load avatar from ${avatarUrl} via axios, using default colors:`, avatarError.message);
         }
 
         const avatarX = parseInt(process.env.WELCOME_CARD_AVATAR_X || '512', 10);

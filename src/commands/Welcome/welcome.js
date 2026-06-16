@@ -81,7 +81,7 @@ export default {
                     .setDescription(welcomeMessage)
                     .setThumbnail(interaction.user.displayAvatarURL())
                     .addFields(
-                        { name: 'User', value: `${interaction.user.tag} (${interaction.user.id})`, inline: true },
+                        { name: 'User', value: `${interaction.user.tag}`, inline: true },
                         { name: 'Member Count', value: interaction.guild.memberCount.toString(), inline: true }
                     )
                     .setTimestamp()
