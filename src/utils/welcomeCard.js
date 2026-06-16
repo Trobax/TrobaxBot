@@ -37,7 +37,7 @@ export async function createWelcomeCard(user, guild) {
         }
 
         const avatarX = parseInt(process.env.WELCOME_CARD_AVATAR_X || '512', 10);
-        const avatarY = parseInt(process.env.WELCOME_CARD_AVATAR_Y || '178', 10);
+        const avatarY = parseInt(process.env.WELCOME_CARD_AVATAR_Y || '175', 10);
         const avatarRadius = parseInt(process.env.WELCOME_CARD_AVATAR_RADIUS || '90', 10);
         console.log(`[WelcomeCard] Drawing avatar at X: ${avatarX}, Y: ${avatarY}, Radius: ${avatarRadius}`);
 
