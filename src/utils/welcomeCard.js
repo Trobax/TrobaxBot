@@ -1,7 +1,8 @@
-import { createCanvas, loadImage } from '@napi-rs/canvas';
+import { createCanvas, loadImage, GlobalFonts } from '@napi-rs/canvas';
 import { AttachmentBuilder } from 'discord.js';
 import axios from 'axios';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { logger } from './logger.js';
 
@@ -9,6 +10,28 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const BG_PATH = path.join(__dirname, '../assets/welcome_bg.png');
+const FONT_PATH = path.join(__dirname, '../assets/Roboto-Bold.ttf');
+
+async function ensureFont() {
+    if (!fs.existsSync(FONT_PATH)) {
+        try {
+            logger.info('Downloading Roboto font for welcome card...');
+            const response = await axios.get('https://github.com/google/fonts/raw/main/apache/roboto/static/Roboto-Bold.ttf', { responseType: 'arraybuffer' });
+            fs.writeFileSync(FONT_PATH, Buffer.from(response.data));
+            logger.info('Roboto font downloaded successfully.');
+        } catch (error) {
+            logger.error('Failed to download Roboto font:', error.message);
+        }
+    }
+    
+    if (fs.existsSync(FONT_PATH)) {
+        try {
+            GlobalFonts.registerFromPath(FONT_PATH, 'Roboto');
+        } catch (regError) {
+            logger.error('Failed to register Roboto font:', regError.message);
+        }
+    }
+}
 
 export async function createWelcomeCard(user, guild) {
     const width = 1024;
@@ -18,6 +41,9 @@ export async function createWelcomeCard(user, guild) {
     const ctx = canvas.getContext('2d');
 
     try {
+        // Ensure custom font is registered
+        await ensureFont();
+
         // 1. Draw Background
         const bg = await loadImage(BG_PATH);
         ctx.drawImage(bg, 0, 0, width, height);
@@ -37,7 +63,7 @@ export async function createWelcomeCard(user, guild) {
         }
 
         const avatarX = parseInt(process.env.WELCOME_CARD_AVATAR_X || '512', 10);
-        const avatarY = parseInt(process.env.WELCOME_CARD_AVATAR_Y || '175', 10);
+        const avatarY = parseInt(process.env.WELCOME_CARD_AVATAR_Y || '174', 10);
         const avatarRadius = parseInt(process.env.WELCOME_CARD_AVATAR_RADIUS || '90', 10);
         console.log(`[WelcomeCard] Drawing avatar at X: ${avatarX}, Y: ${avatarY}, Radius: ${avatarRadius}`);
 
@@ -71,14 +97,14 @@ export async function createWelcomeCard(user, guild) {
         ctx.textAlign = 'center';
         
         // Main welcome heading
-        ctx.font = 'bold 36px sans-serif';
+        ctx.font = 'bold 36px Roboto';
         ctx.shadowColor = '#00e5ff';
         ctx.shadowBlur = 8;
         const welcomeY = parseInt(process.env.WELCOME_CARD_TEXT_WELCOME_Y || '315', 10);
         ctx.fillText('WELCOME', 512, welcomeY);
 
         // Subtext with username and member count
-        ctx.font = 'bold 26px sans-serif';
+        ctx.font = 'bold 26px Roboto';
         ctx.fillStyle = '#00e5ff';
         ctx.shadowColor = '#00e5ff';
         ctx.shadowBlur = 12;
