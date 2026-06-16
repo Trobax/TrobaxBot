@@ -31,7 +31,11 @@ export default {
                 .addBooleanOption(option =>
                     option.setName('ping')
                         .setDescription('Whether to ping the user in the welcome message')
-                        .setRequired(false))),
+                        .setRequired(false)))
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('test')
+                .setDescription('Test the welcome message with your user profile')),
 
     async execute(interaction) {
         try {
@@ -59,6 +63,39 @@ export default {
         }
 
         const subcommand = options.getSubcommand();
+
+        if (subcommand === 'test') {
+            try {
+                const { getDefaultWelcomeMessage } = await import('../../utils/welcome.js');
+                const formatData = { user: interaction.user, guild: interaction.guild, member: interaction.member };
+                const welcomeMessage = formatWelcomeMessage(
+                    getDefaultWelcomeMessage(),
+                    formatData
+                );
+
+                const embed = new EmbedBuilder()
+                    .setColor(getColor('success'))
+                    .setTitle('🎉 Welcome!')
+                    .setDescription(welcomeMessage)
+                    .setThumbnail(interaction.user.displayAvatarURL())
+                    .addFields(
+                        { name: 'User', value: `${interaction.user.tag} (${interaction.user.id})`, inline: true },
+                        { name: 'Member Count', value: interaction.guild.memberCount.toString(), inline: true }
+                    )
+                    .setTimestamp()
+                    .setFooter({ text: `Welcome to ${interaction.guild.name}!` });
+
+                return await InteractionHelper.safeEditReply(interaction, {
+                    embeds: [embed]
+                });
+            } catch (error) {
+                logger.error(`[Welcome] Test trigger failed:`, error);
+                return await InteractionHelper.safeEditReply(interaction, {
+                    embeds: [errorEmbed('Test Failed', 'Could not generate welcome test preview.')],
+                    flags: MessageFlags.Ephemeral
+                });
+            }
+        }
 
         if (subcommand === 'setup') {
             const channel = options.getChannel('channel');

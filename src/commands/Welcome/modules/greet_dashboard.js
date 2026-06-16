@@ -258,7 +258,7 @@ export default {
                 if (customId === `greet_cfg_toggle_welcome_${guildId}`) {
                     cfg.enabled = !cfg.enabled;
                     await saveWelcomeConfig(client, guildId, cfg);
-                    await btnInteraction.followUp({
+                    await InteractionHelper.safeReply(btnInteraction, {
                         embeds: [
                             successEmbed(
                                 '✅ Welcome Updated',
@@ -270,7 +270,7 @@ export default {
                 } else if (customId === `greet_cfg_toggle_goodbye_${guildId}`) {
                     cfg.goodbyeEnabled = !cfg.goodbyeEnabled;
                     await saveWelcomeConfig(client, guildId, cfg);
-                    await btnInteraction.followUp({
+                    await InteractionHelper.safeReply(btnInteraction, {
                         embeds: [
                             successEmbed(
                                 '✅ Goodbye Updated',
@@ -282,7 +282,7 @@ export default {
                 } else if (customId === `greet_cfg_ping_welcome_${guildId}`) {
                     cfg.welcomePing = !cfg.welcomePing;
                     await saveWelcomeConfig(client, guildId, cfg);
-                    await btnInteraction.followUp({
+                    await InteractionHelper.safeReply(btnInteraction, {
                         embeds: [
                             successEmbed(
                                 '✅ Welcome Ping Updated',
@@ -294,7 +294,7 @@ export default {
                 } else if (customId === `greet_cfg_ping_goodbye_${guildId}`) {
                     cfg.goodbyePing = !cfg.goodbyePing;
                     await saveWelcomeConfig(client, guildId, cfg);
-                    await btnInteraction.followUp({
+                    await InteractionHelper.safeReply(btnInteraction, {
                         embeds: [
                             successEmbed(
                                 '✅ Goodbye Ping Updated',
