@@ -3,6 +3,7 @@ import { getColor } from '../config/bot.js';
 import { getGuildConfig } from '../services/guildConfig.js';
 import { getWelcomeConfig } from '../utils/database.js';
 import { formatWelcomeMessage, getDefaultWelcomeMessage } from '../utils/welcome.js';
+import { createWelcomeCard } from '../utils/welcomeCard.js';
 import { logEvent, EVENT_TYPES } from '../services/loggingService.js';
 import { getServerCounters, updateCounter } from '../services/serverstatsService.js';
 import { setBirthday as dbSetBirthday } from '../utils/database.js';
@@ -48,10 +49,13 @@ export default {
                     : `Welcome to ${guild.name}!`;
 
                 const canEmbed = permissions.has(PermissionFlagsBits.EmbedLinks);
+                const welcomeCard = await createWelcomeCard(user, guild);
+                const files = welcomeCard ? [welcomeCard] : [];
 
                 if (!canEmbed) {
                     await channel.send({
-                        content: messageContent || welcomeMessage
+                        content: messageContent || welcomeMessage,
+                        files
                     });
                 } else {
                     const embed = new EmbedBuilder()
@@ -66,7 +70,9 @@ export default {
                         .setTimestamp()
                         .setFooter({ text: embedFooter });
                     
-                    if (welcomeConfig.welcomeImage) {
+                    if (welcomeCard) {
+                        embed.setImage('attachment://welcome-card.png');
+                    } else if (welcomeConfig.welcomeImage) {
                         embed.setImage(welcomeConfig.welcomeImage);
                     } else if (welcomeConfig.welcomeEmbed?.image?.url) {
                         embed.setImage(welcomeConfig.welcomeEmbed.image.url);
@@ -74,7 +80,8 @@ export default {
                     
                     await channel.send({ 
                         content: messageContent,
-                        embeds: [embed] 
+                        embeds: [embed],
+                        files
                     });
                 }
             }

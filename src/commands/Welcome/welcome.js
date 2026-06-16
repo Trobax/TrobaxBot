@@ -67,6 +67,8 @@ export default {
         if (subcommand === 'test') {
             try {
                 const { getDefaultWelcomeMessage } = await import('../../utils/welcome.js');
+                const { createWelcomeCard } = await import('../../utils/welcomeCard.js');
+                
                 const formatData = { user: interaction.user, guild: interaction.guild, member: interaction.member };
                 const welcomeMessage = formatWelcomeMessage(
                     getDefaultWelcomeMessage(),
@@ -85,8 +87,16 @@ export default {
                     .setTimestamp()
                     .setFooter({ text: `Welcome to ${interaction.guild.name}!` });
 
+                const welcomeCard = await createWelcomeCard(interaction.user, interaction.guild);
+                const files = welcomeCard ? [welcomeCard] : [];
+
+                if (welcomeCard) {
+                    embed.setImage('attachment://welcome-card.png');
+                }
+
                 return await InteractionHelper.safeEditReply(interaction, {
-                    embeds: [embed]
+                    embeds: [embed],
+                    files
                 });
             } catch (error) {
                 logger.error(`[Welcome] Test trigger failed:`, error);
